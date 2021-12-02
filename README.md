@@ -1,1 +1,3 @@
-# encrypted_chat
+# Encrypted chat
+Written in Python.
+ECDH + AES
