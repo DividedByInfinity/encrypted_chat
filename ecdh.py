@@ -11,7 +11,7 @@ FORMAT = 'utf-8'
 BLOCK_SIZE = 16
 
 
-class DH:
+class ECDH:
     def __init__(self):
         self.ECDH = ec.generate_private_key(ec.SECP384R1(), default_backend())  # PRIVATE KEY 384 BIT LONG
         self.public_key = self.ECDH.public_key()  # PUBLIC KEY : CHANGE BETWEEN CLIENTS
@@ -54,34 +54,6 @@ class DH:
         padder = padding.PKCS7(128).padder()
         padded_data = padder.update(plaintext.encode(FORMAT)) + padder.finalize()
 
-        # print('* # * ' * 10)
-        # print('Encrypt info')
-        # print('* # * ' * 10)
-        print('enc IV', IV)
-
-        print('enc SALT', SALT)
-        # print('IV bytes\t\t', len(IV))
-        print('enc Shared', shared_key)
-
-        # print('Shared bytes\t', len(shared_key))
-        print('enc Derived', derived_key)
-
-        # print('Derived bytes\t', len(derived_key))
-        # print('AES bits\t\t', aes.algorithm.key_size)
-        # print('AES bytes\t\t', int(aes.algorithm.key_size / 8))
-        # print('Padder bits\t\t', padder.block_size)
-        # print('Padder bytes\t', int(padder.block_size / 8))
-        print('enc Padded', padded_data)
-
-        # print('Plaintxt bytes\t', len(bytes(plaintext.encode(FORMAT))))
-        # print('Padded bytes\t', len(padded_data) - len(bytes(plaintext.encode(FORMAT))))
-
-        # print('Cipher\t\t\t', prep_cipher)
-        # print('Cipher bytes\t', len(prep_cipher))
-        # print(prep_cipher[:16])
-        # print(prep_cipher[16:32])
-        # print(prep_cipher[32:])
-
         return IV + SALT + encryptor.update(padded_data) + encryptor.finalize()
 
     def decrypt(self, public_key, ciphertext):
@@ -107,15 +79,7 @@ class DH:
 
         unpadder = padding.PKCS7(128).unpadder()
 
-        print('dec IV', IV)
-        print('dec SALT', SALT)
-        print('dec Ciphertext', ciphertext)
-        print('dec Shared', shared_key)
-        print('dec Derived', derived_key)
-        unpadded_data = unpadder.update(decrypted_data) + unpadder.finalize()
-        print('dec Unpadded', unpadded_data)
-
-        return unpadded_data
+        return unpadder.update(decrypted_data) + unpadder.finalize()
 
     def serialize_public(self):
         serialized_public = self.public_key.public_bytes(
@@ -129,13 +93,3 @@ class DH:
             public_key,
         )
         return loaded_public_key
-
-# Client1 = DH()
-# Client2 = DH()
-#
-# alice_ciphertext = Client1.encrypt(Client2.public_key, 'It works!')
-#
-# bob_plaintext = Client2.decrypt(Client1.public_key, alice_ciphertext)
-#
-# print('ciphertext\t', alice_ciphertext)
-# print('plaintext\t', bob_plaintext)

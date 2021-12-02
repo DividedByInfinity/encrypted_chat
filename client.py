@@ -14,7 +14,7 @@ class Client:
         self.port = port
         self.client_name = name
         self.server_public = None
-        self.client_cred = DH()
+        self.client_cred = ECDH()
 
         # create socket
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -51,10 +51,6 @@ class Client:
 
         else:
 
-            #
-            # DIFFIE HELLMAN
-            #
-
             server_public = self.client_socket.recv(BUFFER_SIZE)  # get server public
             loaded_client_public = self.client_cred.unserialize_public(server_public)  # load key from bytes
             self.server_public = loaded_client_public  # save server public
@@ -89,13 +85,6 @@ class Client:
                 self.client_socket.close()
                 sys.exit(0)
 
-            # elif msg.lower().startswith('@'):
-            #     user = msg[1:].split()[0]
-            #     user_len = len(msg[1:].split()[0])
-            #     msg = msg[user_len + 1:].strip()
-            #     prep_msg = user + msg
-            #     self.client_socket.send(prep_msg.encode(FORMAT))
-
             if msg != '':
                 ciphertext = self.client_cred.encrypt(
                     self.server_public,
@@ -116,22 +105,6 @@ class Client:
                     ).decode(FORMAT)
                     print(plaintext)
 
-                    # try:
-                    #     msg.decode(FORMAT)
-                    # except UnicodeDecodeError:
-                    #     iv, ciphertext = msg[:16], msg[16:]
-                    #
-                    #     plaintext = self.client_cred.decrypt(
-                    #         self.server_public,
-                    #         ciphertext,
-                    #         iv
-                    #     ).decode(FORMAT)
-                    #
-                    #     print(plaintext)
-                    #     pass
-                    # else:
-                    #     print(msg)
-
             except ConnectionResetError:
                 print("Server is shut down")
                 self.client_socket.close()
@@ -141,22 +114,22 @@ class Client:
                 sys.exit(0)
 
 
-client_name = input('Your name: ')
-client = Client('127.0.0.1', 5551, client_name)
+# client_name = input('Your name: ')
+# client = Client('127.0.0.1', 5551, client_name)
 
-# if len(sys.argv) != 3:
-#     print("\nPlease provide an IP address and a port number\nExample: python server.py 127.0.0.1 5551")
-#     sys.exit(0)
-# else:
-#     try:
-#         # takes the first argument from command prompt as IP address
-#         host = str(sys.argv[1])
-#
-#         # takes second argument from command prompt as port number
-#         port = int(sys.argv[2])
-#     except ValueError as err:
-#         print("\nSomething went wrong! Check IP and port. \n")
-#         sys.exit(0)
-#
-#     client_name = input('Your name: ')
-#     client = Client(host, port, client_name)
+if len(sys.argv) != 3:
+    print("\nPlease provide an IP address and a port number\nExample: python server.py 127.0.0.1 5551")
+    sys.exit(0)
+else:
+    try:
+        # takes the first argument from command prompt as IP address
+        host = str(sys.argv[1])
+
+        # takes second argument from command prompt as port number
+        port = int(sys.argv[2])
+    except ValueError as err:
+        print("\nSomething went wrong! Check IP and port. \n")
+        sys.exit(0)
+
+    client_name = input('Your name: ')
+    client = Client(host, port, client_name)
