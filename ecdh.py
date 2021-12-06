@@ -23,11 +23,13 @@ class ECDH:
         Shared key = 48 bytes
         Derived key = 32 bytes
 
-        AES = 256 bits
-        AES = 32 bytes
+        AES block size = 128 bits
+        AES block size = 16 bytes
+        AES key = 256 bits
+        AES key = 32 bytes
 
-        Padder = 256 bits
-        Padder = 32 bytes
+        Padder = 128 bits
+        Padder = 16 bytes
 
         Ciphertext = IV + SALT + MSG
 
